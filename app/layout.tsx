@@ -19,7 +19,7 @@ export const metadata: Metadata = {
 
 import { AppHeader } from "@/components/app-header";
 
-import { Analytics } from "@vercel/analytics/react"
+import { Analytics } from "@vercel/analytics/next"
 
 export default function RootLayout({
   children,
