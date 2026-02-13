@@ -1,83 +1,127 @@
-
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { SimulationResult } from "@/lib/simulation"
-import { BadgeCheck, Ban } from "lucide-react"
+import { CheckCircle2, XCircle, Flame } from "lucide-react"
 
-interface SimulationResultDisplayProps {
+interface SimulationResultProps {
     result: SimulationResult | null;
     annualExpenses: number;
 }
 
-export function SimulationResultDisplay({ result, annualExpenses }: SimulationResultDisplayProps) {
+export function SimulationResultDisplay({ result, annualExpenses }: SimulationResultProps) {
     if (!result) return null;
 
-    // Format currency helper
-    const formatCurrency = (val: number) => {
-        return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(val);
-    };
+    const isFireYear = result.fireYear !== null;
 
-    const isFireAchieved = result.fireYear !== null;
+    // Use fireYear directly if implementing V2 logic (it's null if not achieved)
+    // The previous implementation used fireYear to mean "the year it happened".
+    // result.fireYear is number | null.
 
     return (
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-            <Card>
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">現在の年間配当金 (予測)</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    <div className="text-2xl font-bold">{formatCurrency(result.yearlyData[0].dividend)}</div>
-                    <p className="text-xs text-muted-foreground">初年度</p>
-                </CardContent>
-            </Card>
+        <div className="space-y-4">
+            {/* FIRE Status Card */}
+            <div className={`p-6 rounded-lg border-l-4 ${isFireYear ? 'border-l-red-500 bg-red-50 dark:bg-red-950/20' : 'border-l-slate-400 bg-slate-50 dark:bg-slate-900/50'}`}>
+                <div className="flex items-center gap-3 mb-4">
+                    {isFireYear ? (
+                        <Flame className="h-8 w-8 text-red-500 fill-red-500 animate-pulse" />
+                    ) : (
+                        <XCircle className="h-8 w-8 text-slate-400" />
+                    )}
+                    <div>
+                        <h3 className="text-xl font-bold">
+                            {isFireYear
+                                ? `${result.fireYear}年目にFIRE達成可能！`
+                                : '40年以内のFIRE達成は困難です'}
+                        </h3>
+                        {isFireYear && (
+                            <p className="text-sm text-slate-600 dark:text-slate-400">
+                                税引後配当金が生活費を上回る予測です
+                            </p>
+                        )}
+                    </div>
+                </div>
 
-            <Card className={isFireAchieved ? "border-green-500 bg-green-50 dark:bg-green-950/20" : ""}>
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">FIRE 達成予測</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {isFireAchieved ? (
-                        <div className="flex items-center space-x-2">
-                            <BadgeCheck className="h-6 w-6 text-green-600" />
-                            <div className="text-2xl font-bold">{result.fireYear}年後</div>
+                {isFireYear && (
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-2">
+                        <div className="bg-white dark:bg-slate-800 p-3 rounded shadow-sm">
+                            <p className="text-xs text-muted-foreground uppercase tracking-wider">達成時の税引後配当</p>
+                            <p className="text-2xl font-bold text-blue-600 dark:text-blue-400">
+                                ¥{result.fireDividendAfterTax?.toLocaleString()}
+                            </p>
                         </div>
-                    ) : (
-                        <div className="flex items-center space-x-2">
-                            <Ban className="h-6 w-6 text-red-500" />
-                            <div className="text-xl font-bold">40年以内未達成</div>
+                        <div className="bg-white dark:bg-slate-800 p-3 rounded shadow-sm">
+                            <p className="text-xs text-muted-foreground uppercase tracking-wider">達成時の総資産</p>
+                            <p className="text-2xl font-bold text-emerald-600 dark:text-emerald-400">
+                                ¥{result.fireAsset?.toLocaleString()}
+                            </p>
                         </div>
-                    )}
-                    <p className="text-xs text-muted-foreground">生活費: {formatCurrency(annualExpenses)}</p>
-                </CardContent>
-            </Card>
+                    </div>
+                )}
+            </div>
 
-            <Card>
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">FIRE達成時の配当金</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {isFireAchieved && result.fireDividend !== null ? (
-                        <div className="text-2xl font-bold">{formatCurrency(result.fireDividend)}</div>
-                    ) : (
-                        <div className="text-xl font-bold">-</div>
-                    )}
-                    <p className="text-xs text-muted-foreground">目標: {formatCurrency(annualExpenses)}</p>
-                </CardContent>
-            </Card>
+            {/* Final Stats Grid */}
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-lg">40年後の総資産</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-3xl font-bold text-emerald-600 dark:text-emerald-400 mb-2">
+                            ¥{result.finalAsset.toLocaleString()}
+                        </p>
+                        <div className="space-y-1 text-sm text-muted-foreground bg-slate-50 dark:bg-slate-900/50 p-3 rounded">
+                            <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-1 mb-1">
+                                <span>内訳</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>日本株資産</span>
+                                <span className="font-medium text-slate-700 dark:text-slate-300">
+                                    ¥{result.yearlyData[result.yearlyData.length - 1].japanAsset.toLocaleString()}
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>海外株資産</span>
+                                <span className="font-medium text-slate-700 dark:text-slate-300">
+                                    ¥{result.yearlyData[result.yearlyData.length - 1].foreignAsset.toLocaleString()}
+                                </span>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
 
-            <Card>
-                <CardHeader className="pb-2">
-                    <CardTitle className="text-sm font-medium text-muted-foreground">FIRE達成時の総資産</CardTitle>
-                </CardHeader>
-                <CardContent>
-                    {isFireAchieved && result.fireAsset !== null ? (
-                        <div className="text-2xl font-bold">{formatCurrency(result.fireAsset)}</div>
-                    ) : (
-                        <div className="text-xl font-bold">-</div>
-                    )}
-                </CardContent>
-            </Card>
+                <Card>
+                    <CardHeader className="pb-2">
+                        <CardTitle className="text-lg">40年後の年間配当金</CardTitle>
+                    </CardHeader>
+                    <CardContent>
+                        <p className="text-3xl font-bold text-blue-600 dark:text-blue-400 mb-2">
+                            ¥{result.finalDividendAfterTax.toLocaleString()} <span className="text-sm font-normal text-slate-500">(税引後)</span>
+                        </p>
+                        <div className="space-y-1 text-sm text-muted-foreground bg-slate-50 dark:bg-slate-900/50 p-3 rounded">
+                            <div className="flex justify-between border-b border-slate-200 dark:border-slate-700 pb-1 mb-1">
+                                <span>内訳 (税引後)</span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>日本株</span>
+                                <span className="font-medium text-slate-700 dark:text-slate-300">
+                                    ¥{result.yearlyData[result.yearlyData.length - 1].japanDividendAfterTax.toLocaleString()}
+                                </span>
+                            </div>
+                            <div className="flex justify-between">
+                                <span>海外株</span>
+                                <span className="font-medium text-slate-700 dark:text-slate-300">
+                                    ¥{result.yearlyData[result.yearlyData.length - 1].foreignDividendAfterTax.toLocaleString()}
+                                </span>
+                            </div>
+                            <div className="flex justify-between pt-2 mt-2 border-t border-slate-200 dark:border-slate-700 text-xs">
+                                <span>税引前合計参考</span>
+                                <span>¥{result.finalDividendPreTax.toLocaleString()}</span>
+                            </div>
+                        </div>
+                    </CardContent>
+                </Card>
+            </div>
         </div>
     )
 }

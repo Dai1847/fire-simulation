@@ -11,10 +11,15 @@ export default function Home() {
   const defaultValues: SimulationInput = {
     initialAsset: 2852896,
     annualInvestment: 400000,
-    dividendYield: 5.25,
-    dividendGrowthRate: 5,
+    initialStockRatio: 50,
+    japanYield: 3.5,
+    foreignYield: 4.5,
+    japanDividendGrowth: 2,
+    foreignDividendGrowth: 5,
     stockGrowthRate: 1,
     annualExpenses: 3600000,
+    taxPattern: 'nisa_under_18m',
+    dividendReinvestmentRate: 100,
   }
 
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null)

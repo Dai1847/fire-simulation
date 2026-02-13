@@ -1,4 +1,3 @@
-
 "use client"
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -62,7 +61,7 @@ export function SimulationChart({ result, annualExpenses }: SimulationChartProps
                             yAxisId="left"
                             orientation="left"
                             tickFormatter={(value) => `¥${(value / 10000).toFixed(0)}万`}
-                            label={{ value: '配当金 (円)', angle: -90, position: 'insideLeft', offset: 10 }}
+                            label={{ value: '配当金 (税引後)', angle: -90, position: 'insideLeft', offset: 10 }}
                             width={90}
                         />
                         <YAxis
@@ -73,11 +72,14 @@ export function SimulationChart({ result, annualExpenses }: SimulationChartProps
                             width={100}
                         />
                         <Tooltip
-                            formatter={(value: number | string | Array<number | string> | undefined) => {
+                            formatter={(value: number | string | Array<number | string> | undefined, name: string | number | undefined) => {
                                 if (typeof value === 'number') {
-                                    return new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(value);
+                                    return [
+                                        new Intl.NumberFormat('ja-JP', { style: 'currency', currency: 'JPY' }).format(value),
+                                        name
+                                    ];
                                 }
-                                return value;
+                                return [value, name];
                             }}
                             labelFormatter={(label) => `${label}年後`}
                         />
@@ -90,8 +92,8 @@ export function SimulationChart({ result, annualExpenses }: SimulationChartProps
 
                         <Line
                             type="monotone"
-                            dataKey="dividend"
-                            name="年間配当金"
+                            dataKey="totalDividendAfterTax"
+                            name="税引後配当金"
                             stroke="#8884d8"
                             dot={<CustomDot fireYear={result.fireYear} />}
                             activeDot={{ r: 8 }}
@@ -100,7 +102,7 @@ export function SimulationChart({ result, annualExpenses }: SimulationChartProps
                         />
                         <Line
                             type="monotone"
-                            dataKey="asset"
+                            dataKey="totalAsset"
                             name="総資産"
                             stroke="#82ca9d"
                             yAxisId="right"
