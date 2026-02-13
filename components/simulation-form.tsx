@@ -14,19 +14,32 @@ interface SimulationFormProps {
 }
 
 export function SimulationForm({ defaultValues, onCalculate }: SimulationFormProps) {
-    const [formData, setFormData] = useState<SimulationInput>(defaultValues);
+    // Local state to handle empty strings during input
+    const [formData, setFormData] = useState<Record<keyof SimulationInput, number | string>>(defaultValues);
 
     const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const { name, value } = e.target;
+        // Allow empty string or valid number input
         setFormData(prev => ({
             ...prev,
-            [name]: parseFloat(value) || 0,
+            [name]: value === '' ? '' : value,
         }));
     };
 
     const handleSubmit = (e: React.FormEvent) => {
         e.preventDefault();
-        onCalculate(formData);
+
+        // Convert state back to stricter SimulationInput numbers
+        const submittedData: SimulationInput = {
+            initialAsset: Number(formData.initialAsset) || 0,
+            dividendYield: Number(formData.dividendYield) || 0,
+            annualInvestment: Number(formData.annualInvestment) || 0,
+            dividendGrowthRate: Number(formData.dividendGrowthRate) || 0,
+            stockGrowthRate: Number(formData.stockGrowthRate) || 0,
+            annualExpenses: Number(formData.annualExpenses) || 0,
+        };
+
+        onCalculate(submittedData);
     };
 
     return (
