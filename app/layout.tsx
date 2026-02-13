@@ -19,6 +19,8 @@ export const metadata: Metadata = {
 
 import { AppHeader } from "@/components/app-header";
 
+import { Analytics } from "@vercel/analytics/react"
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -33,6 +35,7 @@ export default function RootLayout({
         <div className="flex-1">
           {children}
         </div>
+        <Analytics />
       </body>
     </html>
   );
