@@ -1,14 +1,19 @@
 
 "use client"
 
-import { useState } from "react"
+import { Suspense, useEffect, useState } from "react"
+import { useSearchParams } from "next/navigation"
 import { calculateFireSimulation, SimulationInput, SimulationResult } from "@/lib/simulation"
 import { SimulationForm } from "@/components/simulation-form"
 import { SimulationResultDisplay } from "@/components/simulation-result"
 import { SimulationChart } from "@/components/simulation-chart"
 import { UsageGuide } from "@/components/usage-guide"
+import { Loader2 } from "lucide-react"
 
-export default function Home() {
+function FireSimulationContent() {
+  const searchParams = useSearchParams()
+  const expensesParam = searchParams.get('expenses')
+
   const defaultValues: SimulationInput = {
     initialAsset: 2852896,
     annualInvestment: 400000,
@@ -18,13 +23,18 @@ export default function Home() {
     japanDividendGrowth: 2,
     foreignDividendGrowth: 5,
     stockGrowthRate: 1,
-    annualExpenses: 3600000,
+    annualExpenses: expensesParam ? Number(expensesParam) : 3600000,
     taxPattern: 'nisa_under_18m',
     dividendReinvestmentRate: 100,
   }
 
+  // Key to force re-render form when defaultValues change (e.g. from query param)
+  const formKey = expensesParam ? `form-${expensesParam}` : 'form-default'
+
   const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null)
   const [currentExpenses, setCurrentExpenses] = useState<number>(defaultValues.annualExpenses)
+
+  // Auto-calculate if expenses param is present? Maybe not, just fill the form.
 
   const handleCalculate = (input: SimulationInput) => {
     const result = calculateFireSimulation(input)
@@ -32,6 +42,52 @@ export default function Home() {
     setCurrentExpenses(input.annualExpenses)
   }
 
+  return (
+    <div className="max-w-7xl mx-auto container px-4 py-8">
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+
+        {/* Input Sidebar */}
+        <div className="lg:col-span-4 space-y-6">
+          <SimulationForm
+            key={formKey}
+            defaultValues={defaultValues}
+            onCalculate={handleCalculate}
+          />
+          <div className="text-xs text-slate-400 dark:text-slate-500 text-center">
+            ※ シミュレーション結果は予測であり、将来の運用成果を保証するものではありません。
+          </div>
+        </div>
+
+        {/* Results Area */}
+        <div className="lg:col-span-8 space-y-8">
+          {simulationResult ? (
+            <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
+              <SimulationResultDisplay
+                result={simulationResult}
+                annualExpenses={currentExpenses}
+              />
+              <SimulationChart
+                result={simulationResult}
+                annualExpenses={currentExpenses}
+              />
+            </div>
+          ) : (
+            <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg bg-slate-100 dark:bg-slate-800/50">
+              <p className="text-slate-500 dark:text-slate-400 font-medium">
+                左側のフォームから条件を入力し、「シミュレーション開始」を押してください
+              </p>
+            </div>
+          )}
+
+          {/* Usage Guide */}
+          <UsageGuide />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default function FirePage() {
   return (
     <main className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
       {/* Hero Section */}
@@ -48,46 +104,13 @@ export default function Home() {
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto container px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
-
-          {/* Input Sidebar */}
-          <div className="lg:col-span-4 space-y-6">
-            <SimulationForm
-              defaultValues={defaultValues}
-              onCalculate={handleCalculate}
-            />
-            <div className="text-xs text-slate-400 dark:text-slate-500 text-center">
-              ※ シミュレーション結果は予測であり、将来の運用成果を保証するものではありません。
-            </div>
-          </div>
-
-          {/* Results Area */}
-          <div className="lg:col-span-8 space-y-8">
-            {simulationResult ? (
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
-                <SimulationResultDisplay
-                  result={simulationResult}
-                  annualExpenses={currentExpenses}
-                />
-                <SimulationChart
-                  result={simulationResult}
-                  annualExpenses={currentExpenses}
-                />
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg bg-slate-100 dark:bg-slate-800/50">
-                <p className="text-slate-500 dark:text-slate-400 font-medium">
-                  左側のフォームから条件を入力し、「シミュレーション開始」を押してください
-                </p>
-              </div>
-            )}
-            
-            {/* Usage Guide */}
-            <UsageGuide />
-          </div>
+      <Suspense fallback={
+        <div className="flex justify-center items-center py-20">
+          <Loader2 className="h-8 w-8 animate-spin text-blue-600" />
         </div>
-      </div>
+      }>
+        <FireSimulationContent />
+      </Suspense>
     </main>
   )
 }

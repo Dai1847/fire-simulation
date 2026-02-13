@@ -1,4 +1,4 @@
-import { LucideIcon, Flame } from "lucide-react";
+import { LucideIcon, Flame, Wallet } from "lucide-react";
 
 export type ToolConfig = {
     id: string;
@@ -19,6 +19,15 @@ export const tools: ToolConfig[] = [
         icon: Flame,
         color: "text-red-500",
         bgGradient: "from-red-500/10 to-orange-500/10"
+    },
+    {
+        id: "life-cost",
+        title: "生活費シミュレーション",
+        description: "インフレや教育費を考慮した、将来必要となるリアルな生活費を算出します。",
+        href: "/life",
+        icon: Wallet,
+        color: "text-blue-500",
+        bgGradient: "from-blue-500/10 to-indigo-500/10"
     },
     // Future tools can be added here
 ];
