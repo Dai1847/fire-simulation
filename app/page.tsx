@@ -6,6 +6,7 @@ import { calculateFireSimulation, SimulationInput, SimulationResult } from "@/li
 import { SimulationForm } from "@/components/simulation-form"
 import { SimulationResultDisplay } from "@/components/simulation-result"
 import { SimulationChart } from "@/components/simulation-chart"
+import { UsageGuide } from "@/components/usage-guide"
 
 export default function Home() {
   const defaultValues: SimulationInput = {
@@ -81,6 +82,9 @@ export default function Home() {
                 </p>
               </div>
             )}
+            
+            {/* Usage Guide */}
+            <UsageGuide />
           </div>
         </div>
       </div>
