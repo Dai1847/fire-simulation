@@ -1,91 +1,56 @@
-
 "use client"
 
-import { useState } from "react"
-import { calculateFireSimulation, SimulationInput, SimulationResult } from "@/lib/simulation"
-import { SimulationForm } from "@/components/simulation-form"
-import { SimulationResultDisplay } from "@/components/simulation-result"
-import { SimulationChart } from "@/components/simulation-chart"
-import { UsageGuide } from "@/components/usage-guide"
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
+import { tools } from "@/lib/tools-config"
+import Link from "next/link"
+import { ArrowRight } from "lucide-react"
 
-export default function Home() {
-  const defaultValues: SimulationInput = {
-    initialAsset: 2852896,
-    annualInvestment: 400000,
-    initialStockRatio: 50,
-    japanYield: 3.5,
-    foreignYield: 4.5,
-    japanDividendGrowth: 2,
-    foreignDividendGrowth: 5,
-    stockGrowthRate: 1,
-    annualExpenses: 3600000,
-    taxPattern: 'nisa_under_18m',
-    dividendReinvestmentRate: 100,
-  }
-
-  const [simulationResult, setSimulationResult] = useState<SimulationResult | null>(null)
-  const [currentExpenses, setCurrentExpenses] = useState<number>(defaultValues.annualExpenses)
-
-  const handleCalculate = (input: SimulationInput) => {
-    const result = calculateFireSimulation(input)
-    setSimulationResult(result)
-    setCurrentExpenses(input.annualExpenses)
-  }
-
+export default function Dashboard() {
   return (
-    <main className="min-h-screen bg-slate-50 dark:bg-slate-900 transition-colors duration-300">
+    <main className="min-h-screen bg-slate-50 dark:bg-slate-900">
+
       {/* Hero Section */}
-      <div className="bg-gradient-to-r from-blue-600 to-indigo-700 text-white py-12 px-4 shadow-lg">
-        <div className="max-w-7xl mx-auto container">
-          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl mb-2">
-            FIRE Simulation
+      <div className="bg-gradient-to-r from-slate-800 to-slate-900 text-white py-16 px-4">
+        <div className="container mx-auto max-w-5xl">
+          <h1 className="text-4xl font-extrabold tracking-tight sm:text-5xl mb-4">
+            Life Simulation Tools
           </h1>
-          <p className="text-blue-100 text-lg sm:text-xl max-w-2xl">
-            高配当株投資による経済的自立への道筋をシミュレーション。
-            <br className="hidden sm:inline" />
-            配当金の成長と複利効果を視覚化します。
+          <p className="text-slate-300 text-lg sm:text-xl max-w-2xl">
+            あなたの人生設計をサポートする、便利なシミュレーションツール集。
           </p>
         </div>
       </div>
 
-      <div className="max-w-7xl mx-auto container px-4 py-8">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      {/* Tools Grid */}
+      <div className="container mx-auto max-w-5xl px-4 py-12">
+        <h2 className="text-2xl font-bold text-slate-800 dark:text-slate-100 mb-8 border-b pb-4">
+          利用可能なツール
+        </h2>
 
-          {/* Input Sidebar */}
-          <div className="lg:col-span-4 space-y-6">
-            <SimulationForm
-              defaultValues={defaultValues}
-              onCalculate={handleCalculate}
-            />
-            <div className="text-xs text-slate-400 dark:text-slate-500 text-center">
-              ※ シミュレーション結果は予測であり、将来の運用成果を保証するものではありません。
-            </div>
-          </div>
-
-          {/* Results Area */}
-          <div className="lg:col-span-8 space-y-8">
-            {simulationResult ? (
-              <div className="animate-in fade-in slide-in-from-bottom-4 duration-500 space-y-8">
-                <SimulationResultDisplay
-                  result={simulationResult}
-                  annualExpenses={currentExpenses}
-                />
-                <SimulationChart
-                  result={simulationResult}
-                  annualExpenses={currentExpenses}
-                />
-              </div>
-            ) : (
-              <div className="flex flex-col items-center justify-center h-64 border-2 border-dashed border-slate-300 dark:border-slate-700 rounded-lg bg-slate-100 dark:bg-slate-800/50">
-                <p className="text-slate-500 dark:text-slate-400 font-medium">
-                  左側のフォームから条件を入力し、「シミュレーション開始」を押してください
-                </p>
-              </div>
-            )}
-            
-            {/* Usage Guide */}
-            <UsageGuide />
-          </div>
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {tools.map((tool) => (
+            <Link key={tool.id} href={tool.href} className="group block h-full">
+              <Card className="h-full transition-all duration-300 hover:shadow-xl hover:-translate-y-1 border-slate-200 dark:border-slate-800 overflow-hidden">
+                <div className={`h-2 w-full bg-gradient-to-r ${tool.bgGradient || 'from-slate-500 to-slate-600'}`} />
+                <CardHeader>
+                  <div className="flex items-center justify-between mb-2">
+                    <div className={`p-3 rounded-lg bg-slate-100 dark:bg-slate-800 ${tool.color}`}>
+                      <tool.icon className="h-6 w-6" />
+                    </div>
+                    <ArrowRight className="h-5 w-5 text-slate-300 group-hover:text-slate-600 dark:text-slate-600 dark:group-hover:text-slate-400 transition-colors" />
+                  </div>
+                  <CardTitle className="text-xl group-hover:text-blue-600 dark:group-hover:text-blue-400 transition-colors">
+                    {tool.title}
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <CardDescription className="text-base">
+                    {tool.description}
+                  </CardDescription>
+                </CardContent>
+              </Card>
+            </Link>
+          ))}
         </div>
       </div>
     </main>
