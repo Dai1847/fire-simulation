@@ -62,13 +62,15 @@ export function SimulationChart({ result, annualExpenses }: SimulationChartProps
                             yAxisId="left"
                             orientation="left"
                             tickFormatter={(value) => `¥${(value / 10000).toFixed(0)}万`}
-                            label={{ value: '配当金 (円)', angle: -90, position: 'insideLeft' }}
+                            label={{ value: '配当金 (円)', angle: -90, position: 'insideLeft', offset: 10 }}
+                            width={90}
                         />
                         <YAxis
                             yAxisId="right"
                             orientation="right"
-                            tickFormatter={(value) => `¥${(value / 100000000).toFixed(1)}億`}
-                            label={{ value: '総資産 (円)', angle: 90, position: 'insideRight' }}
+                            tickFormatter={(value) => `¥${(value / 10000000).toFixed(1)}千万`}
+                            label={{ value: '総資産 (円)', angle: 90, position: 'insideRight', offset: 10 }}
+                            width={100}
                         />
                         <Tooltip
                             formatter={(value: number | string | Array<number | string> | undefined) => {
