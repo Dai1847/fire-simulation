@@ -35,8 +35,14 @@ export function AllocationChart({ model }: AllocationChartProps) {
                         ))}
                     </Pie>
                     <Tooltip
-                        formatter={(value: number) => [`${value}%`, '配分比率']}
-                        contentStyle={{ backgroundColor: 'var(--background)', borderColor: 'var(--border)' }}
+                        formatter={(value: number | string | undefined) => {
+                            const num = typeof value === "number" ? value : Number(value ?? 0);
+                            return [`${num}%`, "配分比率"];
+                        }}
+                        contentStyle={{
+                            backgroundColor: "var(--background)",
+                            borderColor: "var(--border)",
+                        }}
                     />
                     <Legend verticalAlign="bottom" height={36} />
                 </PieChart>
