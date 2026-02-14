@@ -1,4 +1,4 @@
-import { LucideIcon, Flame, Wallet, ShieldCheck, PieChart, TrendingUp } from "lucide-react";
+import { LucideIcon, Flame, Wallet, ShieldCheck, PieChart, TrendingUp, Target } from "lucide-react";
 
 export type ToolConfig = {
     id: string;
@@ -55,5 +55,15 @@ export const tools: ToolConfig[] = [
         icon: TrendingUp,
         color: "text-amber-500",
         bgGradient: "from-amber-500/10 to-yellow-500/10"
+    },
+    {
+        id: "dividend-target",
+        title: "配当金目標達成シミュレーション",
+        description: "目標とする年間配当金額に到達するまでの年数を可視化。配当再投資や増配率を考慮したシミュレーションが可能です。",
+        href: "/dividend-target",
+        icon: Target,
+        color: "text-teal-500",
+        bgGradient: "from-teal-500/10 to-cyan-500/10"
     }
 ];
+
