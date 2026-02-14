@@ -1,4 +1,4 @@
-import { LucideIcon, Flame, Wallet } from "lucide-react";
+import { LucideIcon, Flame, Wallet, ShieldCheck } from "lucide-react";
 
 export type ToolConfig = {
     id: string;
@@ -29,5 +29,13 @@ export const tools: ToolConfig[] = [
         color: "text-blue-500",
         bgGradient: "from-blue-500/10 to-indigo-500/10"
     },
-    // Future tools can be added here
+    {
+        id: "risk-check",
+        title: "リスク許容度診断",
+        description: "10個の質問に答えるだけで、あなたの投資リスク許容度タイプ（5段階）を診断します。",
+        href: "/risk-check",
+        icon: ShieldCheck,
+        color: "text-green-500",
+        bgGradient: "from-green-500/10 to-emerald-500/10"
+    }
 ];
