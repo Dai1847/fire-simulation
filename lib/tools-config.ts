@@ -1,4 +1,4 @@
-import { LucideIcon, Flame, Wallet, ShieldCheck } from "lucide-react";
+import { LucideIcon, Flame, Wallet, ShieldCheck, PieChart, TrendingUp } from "lucide-react";
 
 export type ToolConfig = {
     id: string;
@@ -37,5 +37,23 @@ export const tools: ToolConfig[] = [
         icon: ShieldCheck,
         color: "text-green-500",
         bgGradient: "from-green-500/10 to-emerald-500/10"
+    },
+    {
+        id: "asset-allocation",
+        title: "資産配分診断",
+        description: "年齢やリスク許容度から、最適な資産配分（株式・債券・現金）を提案します。",
+        href: "/asset-allocation",
+        icon: PieChart,
+        color: "text-purple-500",
+        bgGradient: "from-purple-500/10 to-violet-500/10"
+    },
+    {
+        id: "high-dividend-allocation",
+        title: "高配当株 資産配分診断",
+        description: "高配当株投資に特化した資産配分を診断。国内高配当株・米国ETF・債券・現金の最適比率を提案します。",
+        href: "/high-dividend-allocation",
+        icon: TrendingUp,
+        color: "text-amber-500",
+        bgGradient: "from-amber-500/10 to-yellow-500/10"
     }
 ];
