@@ -20,11 +20,27 @@ export function AppHeader() {
 
                 <nav className="flex flex-1 items-center justify-end space-x-4">
                     {!isHome && (
+                        <>
+                            <Link
+                                href="/"
+                                className="text-sm font-medium text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"
+                            >
+                                ツール一覧
+                            </Link>
+                            <Link
+                                href="/blog"
+                                className="text-sm font-medium text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"
+                            >
+                                ブログ
+                            </Link>
+                        </>
+                    )}
+                    {isHome && (
                         <Link
-                            href="/"
+                            href="/blog"
                             className="text-sm font-medium text-slate-600 hover:text-indigo-600 dark:text-slate-400 dark:hover:text-indigo-400 transition-colors"
                         >
-                            ← ツール一覧に戻る
+                            ブログ
                         </Link>
                     )}
                 </nav>
