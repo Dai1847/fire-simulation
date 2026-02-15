@@ -51,6 +51,7 @@ export default function RootLayout({
           crossOrigin="anonymous"
           strategy="afterInteractive"
         />
+        <meta name="google-site-verification" content="Mjic0_ua9z-_CBs2ks5Ie-Bv71g3tP-Npoy7EPjrSmc" />
       </head>
 
       <body
